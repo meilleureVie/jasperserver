@@ -7,6 +7,7 @@ set -e
 #DB_USER=${DB_USER:-DEFAULT_VALE}
 #DB_PASSWORD=${DB_PASSWORD:-DEFAULT_VALE}
 #DB_TYPE=${DB_TYPE:-DEFAULT_VALE}
+DB_NAME=${DB_NAME:-"jasperserver"}
 
 # wait upto 30 seconds for the database to start before connecting
 /wait-for-it.sh $DB_HOST:$DB_PORT -t 30
@@ -27,7 +28,7 @@ if [ -f "/.do_deploy_jasperserver" ]; then
     sed -i -e "s|^appServerDir.*$|appServerDir = $CATALINA_HOME|g" default_master.properties
     
     # set all the database settings
-    sed -i -e "s|^dbHost.*$|dbHost=$DB_HOST|g; s|^# dbPort.*$|dbPort=$DB_PORT|g; s|^dbUsername.*$|dbUsername=$DB_USER|g; s|^dbPassword.*$|dbPassword=$DB_PASSWORD|g" default_master.properties
+    sed -i -e "s|^dbHost.*$|dbHost=$DB_HOST|g; s|^# dbPort.*$|dbPort=$DB_PORT|g; s|^dbUsername.*$|dbUsername=$DB_USER|g; s|^dbPassword.*$|dbPassword=$DB_PASSWORD|g; s|^# js\.dbName.*$|js.dbName=$DB_NAME|g" default_master.properties
     
     # rename the application war so that it can be served as the default tomcat web application
     sed -i -e "s|^# webAppNameCE.*$|webAppNameCE = ROOT|g" default_master.properties
@@ -41,18 +42,6 @@ if [ -f "/.do_deploy_jasperserver" ]; then
     # bootstrap was successful, delete file so we don't bootstrap on subsequent restarts
     rm /.do_deploy_jasperserver
 
-    # import any export zip files from another JasperServer
-
-    shopt -s nullglob # handle case if no zip files found
-
-    IMPORT_FILES=/jasperserver-import/*.zip
-    for f in $IMPORT_FILES
-    do
-      echo "Importing $f..."
-      ./js-import.sh --input-zip $f
-    done
-
-    popd
 fi
 
 # run Tomcat to start JasperServer webapp

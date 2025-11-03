@@ -1,0 +1,4 @@
+dbPort=3333
+
+# JasperServer db name, sample db names
+js.dbName=railway
