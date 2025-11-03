@@ -28,7 +28,7 @@ if [ -f "/.do_deploy_jasperserver" ]; then
     sed -i -e "s|^appServerDir.*$|appServerDir = $CATALINA_HOME|g" default_master.properties
     
     # set all the database settings
-    sed -i -e "s|^dbHost.*$|dbHost=$DB_HOST|g; s|^# dbPort.*$|dbPort=$DB_PORT|g; s|^dbUsername.*$|dbUsername=$DB_USER|g; s|^dbPassword.*$|dbPassword=$DB_PASSWORD|g" default_master.properties
+    sed -i -e "s|^dbHost.*$|dbHost=$DB_HOST|g; s|^# dbPort.*$|dbPort=$DB_PORT|g; s|^dbUsername.*$|dbUsername=$DB_USER|g; s|^dbPassword.*$|dbPassword=$DB_PASSWORD|g; s|^# js\.dbName.*$|js.dbName=$DB_NAME|g" default_master.properties
     
     # rename the application war so that it can be served as the default tomcat web application
     sed -i -e "s|^# webAppNameCE.*$|webAppNameCE = ROOT|g" default_master.properties
