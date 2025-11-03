@@ -1,0 +1,44 @@
+FROM tomcat:9.0-jre8
+MAINTAINER Augustin Medoatinsa amedoatinsa@chezgugu.com
+
+ENV JASPERSERVER_VERSION 8.2.0
+
+# Execute all in one layer so that it keeps the image as small as possible
+COPY jasperreports-server-cp-${JASPERSERVER_VERSION}-bin /usr/src/jasperreports-server
+RUN rm -r /usr/src/jasperreports-server/samples
+
+# Used to wait for the database to start before connecting to it
+# This script is from https://github.com/vishnubob/wait-for-it
+# as recommended by https://docs.docker.com/compose/startup-order/
+COPY wait-for-it.sh /wait-for-it.sh
+
+# Used to bootstrap JasperServer the first time it runs and start Tomcat each
+COPY entrypoint.sh /entrypoint.sh
+COPY .do_deploy_jasperserver /.do_deploy_jasperserver
+
+#Execute all in one layer so that it keeps the image as small as possible
+RUN chmod a+x /entrypoint.sh && \
+    chmod a+x /wait-for-it.sh
+
+# This volume allows JasperServer export zip files to be automatically imported when bootstrapping
+VOLUME ["/jasperserver-import"]
+
+# By default, JasperReports Server only comes with Postgres & MariaDB drivers
+# Copy over other JBDC drivers the deploy-jdbc-jar ant task will put it in right location
+COPY drivers/db2jcc4-no-pdq-in-manifest.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/db2jcc4.jar
+COPY drivers/mysql-connector-j-8.4.0.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/mysql-connector-j-8.4.0.jar
+
+# Copy web.xml with cross-domain enable
+COPY web.xml /usr/local/tomcat/conf/
+
+# Use a strict minimum settings to start-up
+# as per http://community.jaspersoft.com/documentation/jasperreports-server-install-guide/v561/setting-jvm-options-application-servers
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=128m -Xss2m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+
+# Wait for DB to start-up, start up JasperServer and bootstrap if required
+ENTRYPOINT ["/entrypoint.sh"]
+
+
+# tmp
+#docker build -t jasperserver . 
+#docker run -d --name jasperserver -e DB_TYPE=postgresql -e DB_HOST="host.docker.internal" -e DB_PORT=5432 -e DB_USER=postgres -e DB_PASSWORD=augustin -p 8082:8080 jasperserver
