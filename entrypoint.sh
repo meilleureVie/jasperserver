@@ -7,6 +7,7 @@ set -e
 #DB_USER=${DB_USER:-DEFAULT_VALE}
 #DB_PASSWORD=${DB_PASSWORD:-DEFAULT_VALE}
 #DB_TYPE=${DB_TYPE:-DEFAULT_VALE}
+DB_NAME=${DB_NAME:-"jasperserver"}
 
 # wait upto 30 seconds for the database to start before connecting
 /wait-for-it.sh $DB_HOST:$DB_PORT -t 30
