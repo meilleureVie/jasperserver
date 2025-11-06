@@ -30,5 +30,5 @@ primary_region = 'ams'
 #   DB_NAME = 'jasperserver'
 #   DB_PASSWORD = 'password1234'
 	
-# fly secrets set SUPER_SECRET_KEY="password1234" --app jasperserver
+# fly secrets set DB_PASSWORD="password1234"
 # fly ssh console -C "printenv"

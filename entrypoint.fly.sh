@@ -20,6 +20,12 @@ export BUILDOMATIC_MODE=script
 if [ -f "/.do_deploy_jasperserver" ]; then
     pushd /usr/src/jasperreports-server/buildomatic
     
+    echo "host: $DB_HOST"
+    echo "port: $DB_PORT"
+    echo "user: $DB_USER"
+    echo "password: $DB_PASSWORD"
+    echo "db: $DB_NAME"
+    
     # Use provided configuration templates
     # Note: only works for Postgres or MySQL
     cp sample_conf/${DB_TYPE}_master.properties default_master.properties
