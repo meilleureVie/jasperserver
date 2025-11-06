@@ -32,7 +32,8 @@ COPY web.xml /usr/local/tomcat/conf/
 
 # Use a strict minimum settings to start-up
 # as per http://community.jaspersoft.com/documentation/jasperreports-server-install-guide/v561/setting-jvm-options-application-servers
-ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=128m -Xss2m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+ENV JAVA_OPTS="-Xms512m -Xmx512m -XX:+UseContainerSupport -XX:+UseG1GC"
+# ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=128m -Xss2m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
 
 # Wait for DB to start-up, start up JasperServer and bootstrap if required
 ENTRYPOINT ["/entrypoint.sh"]
