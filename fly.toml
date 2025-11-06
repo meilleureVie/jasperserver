@@ -23,12 +23,12 @@ primary_region = 'ams'
   cpus = 1
 
 [env]
-    DB_HOST = 'jasperserver-db.flycast'
+    DB_HOST = 'jasperserver-db.fly.dev'
     DB_PORT = '5432'
     DB_USER = 'postgres'
-    DB_DB_NAME = 'jasperserver'
     DB_TYPE = 'postgresql'
+#   DB_NAME = 'jasperserver'
 #   DB_PASSWORD = 'password1234'
 	
-# fly secrets set SUPER_SECRET_KEY=password1234
+# fly secrets set SUPER_SECRET_KEY="password1234" --app jasperserver
 # fly ssh console -C "printenv"

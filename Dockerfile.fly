@@ -48,7 +48,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 
 # some cmd to deploy from github
-# fly launch --no-deploy  --name "msparc-backend"
+# fly launch --no-deploy  --name "jasperver"
 # fly tokens create deploy -x 999999h
 # fly scale show
 # fly scale count 1
