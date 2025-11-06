@@ -13,7 +13,7 @@ RUN rm -r /usr/src/jasperreports-server/samples
 COPY wait-for-it.sh /wait-for-it.sh
 
 # Used to bootstrap JasperServer the first time it runs and start Tomcat each
-COPY entrypoint.railway.sh /entrypoint.sh
+COPY entrypoint.fly.sh /entrypoint.sh
 COPY .do_deploy_jasperserver /.do_deploy_jasperserver
 
 #Execute all in one layer so that it keeps the image as small as possible
@@ -38,6 +38,17 @@ ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=128m -Xss2m -X
 ENTRYPOINT ["/entrypoint.sh"]
 
 
-# tmp
-#docker build -t jasperserver . 
-#docker run -d --name jasperserver -e DB_TYPE=postgresql -e DB_HOST="host.docker.internal" -e DB_PORT=5432 -e DB_USER=postgres -e DB_NAME=jasper3 -e DB_PASSWORD=augustin -p 8082:8080 jasperserver3
+
+# more docs
+# https://fly.io/docs/reference/configuration/#specify-a-docker-image
+# https://fly.io/docs/languages-and-frameworks/dockerfile/
+# https://fly.io/docs/launch/continuous-deployment-with-github-actions/
+# https://fly.io/docs/launch/autostop-autostart/
+# https://fly.io/docs/launch/scale-count/
+
+
+# some cmd to deploy from github
+# fly launch --no-deploy  --name "msparc-backend"
+# fly tokens create deploy -x 999999h
+# fly scale show
+# fly scale count 1
