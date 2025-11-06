@@ -3,9 +3,6 @@ MAINTAINER Augustin Medoatinsa amedoatinsa@chezgugu.com
 
 ENV JASPERSERVER_VERSION 8.2.0
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y openjdk-8-jre openjdk-8-jdk unzip
-
 # Execute all in one layer so that it keeps the image as small as possible
 COPY jasperreports-server-cp-${JASPERSERVER_VERSION}-bin /usr/src/jasperreports-server
 RUN rm -r /usr/src/jasperreports-server/samples
