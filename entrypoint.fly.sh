@@ -20,11 +20,11 @@ export BUILDOMATIC_MODE=script
 if [ -f "/.do_deploy_jasperserver" ]; then
     pushd /usr/src/jasperreports-server/buildomatic
     
-    echo "host: $DB_HOST"
-    echo "port: $DB_PORT"
-    echo "user: $DB_USER"
-    echo "password: $DB_PASSWORD"
-    echo "db: $DB_NAME"
+    # echo "host: $DB_HOST"
+    # echo "port: $DB_PORT"
+    # echo "user: $DB_USER"
+    # echo "password: $DB_PASSWORD"
+    # echo "db: $DB_NAME"
     
     # Use provided configuration templates
     # Note: only works for Postgres or MySQL
@@ -34,6 +34,7 @@ if [ -f "/.do_deploy_jasperserver" ]; then
     sed -i -e "s|^appServerDir.*$|appServerDir = $CATALINA_HOME|g" default_master.properties
     
     # set all the database settings
+    DB_PASSWORD=$(sed -e 's/[&\\/]/\\&/g; s/$/\\/' -e '$s/\\$//' <<<"$DB_PASSWORD")
     sed -i -e "s|^dbHost.*$|dbHost=$DB_HOST|g; s|^# dbPort.*$|dbPort=$DB_PORT|g; s|^dbUsername.*$|dbUsername=$DB_USER|g; s|^dbPassword.*$|dbPassword=$DB_PASSWORD|g; s|^# js\.dbName.*$|js.dbName=$DB_NAME|g" default_master.properties
     
     # rename the application war so that it can be served as the default tomcat web application
