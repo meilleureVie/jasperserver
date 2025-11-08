@@ -10,6 +10,7 @@ set -e
 DB_NAME=${DB_NAME:-"jasperserver"}
 CURRENT_COMMIT_FILE="/.fly__jasperserver_version"
 LAST_COMMIT_FILE="${CATALINA_HOME}/webapps/.fly__jasperserver_version"
+KEYSTORE_CONFIG_FILE="${CATALINA_HOME}/webapps/ROOT/WEB-INF/classes/keystore.init.properties"
 
 # wait upto 30 seconds for the database to start before connecting
 /wait-for-it.sh $DB_HOST:$DB_PORT -t 30
@@ -48,15 +49,17 @@ if [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     ./js-ant import-minimal-ce 
     ./js-ant deploy-webapp-ce
     
+    # change keystore path by moving it to the volume
+    mv /root/.jrsks ${CATALINA_HOME}/webapps/
+    mv /root/.jrsksp ${CATALINA_HOME}/webapps/
+    sed -i -e "s|^ks=.*$|ks=${CATALINA_HOME}/webapps|g; s|^ksp=.*$|ksp=${CATALINA_HOME}/webapps|g" ${KEYSTORE_CONFIG_FILE}
+    
     # bootstrap was successful, delete file so we don't bootstrap on subsequent restarts
     cp -f "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
-    rm "${CATALINA_HOME}/webapps/.jasperserver_deployed"
     
     popd
     
-else
-    
-    # run Tomcat to start JasperServer webapp
-    catalina.sh run
-
 fi
+
+# run Tomcat to start JasperServer webapp
+catalina.sh run

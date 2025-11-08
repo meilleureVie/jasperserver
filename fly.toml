@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for jasperserver on 2025-11-08T11:25:05-05:00
+# fly.toml app configuration file generated for jasperserver on 2025-11-08T15:57:06-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -21,7 +21,7 @@ primary_region = 'ams'
 # fly ssh console -C "printenv"
 
 [[mounts]]
-  source = 'app_dir'
+  source = 'jasper_webapps_dir'
   destination = '/usr/local/tomcat/webapps'
 
 [http_service]
@@ -35,4 +35,4 @@ primary_region = 'ams'
 [[vm]]
   memory = '2gb'
   cpu_kind = 'shared'
-  cpus = 1
+  cpus = 2
