@@ -2,6 +2,7 @@
 set -e
 
 # apply default values for env variables
+#RELEASE_COMMAND=1  # this parameter is set within the temporary release Machine
 #DB_HOST=${DB_HOST:-DEFAULT_VALE}
 #DB_PORT=${DB_PORT:-DEFAULT_VALE}
 #DB_USER=${DB_USER:-DEFAULT_VALE}
@@ -16,16 +17,16 @@ DB_NAME=${DB_NAME:-"jasperserver"}
 # see https://community.jaspersoft.com/questions/1155841/docker-install-75-failing-create-ks-interactive-prompt.
 export BUILDOMATIC_MODE=script
 
-# check if we need to bootstrap the JasperServer
-if [ -f "/.do_deploy_jasperserver" ]; then
+# echo "host: $DB_HOST"
+# echo "port: $DB_PORT"
+# echo "user: $DB_USER"
+# echo "password: $DB_PASSWORD"
+# echo "db: $DB_NAME"
+
+# check if we are running in fly build environment
+if [ -v RELEASE_COMMAND ]; then
     pushd /usr/src/jasperreports-server/buildomatic
-    
-    # echo "host: $DB_HOST"
-    # echo "port: $DB_PORT"
-    # echo "user: $DB_USER"
-    # echo "password: $DB_PASSWORD"
-    # echo "db: $DB_NAME"
-    
+
     # Use provided configuration templates
     # Note: only works for Postgres or MySQL
     cp sample_conf/${DB_TYPE}_master.properties default_master.properties
@@ -49,7 +50,12 @@ if [ -f "/.do_deploy_jasperserver" ]; then
     # bootstrap was successful, delete file so we don't bootstrap on subsequent restarts
     rm /.do_deploy_jasperserver
 
-fi
+    popd
 
-# run Tomcat to start JasperServer webapp
-catalina.sh run
+else
+    # we are in prod environment
+
+    # run Tomcat to start JasperServer webapp
+    catalina.sh run
+
+fi
