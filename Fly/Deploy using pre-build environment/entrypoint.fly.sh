@@ -2,13 +2,13 @@
 set -e
 
 # apply default values for env variables
+#RELEASE_COMMAND=1  # this parameter is set within the temporary release Machine
 #DB_HOST=${DB_HOST:-DEFAULT_VALE}
 #DB_PORT=${DB_PORT:-DEFAULT_VALE}
 #DB_USER=${DB_USER:-DEFAULT_VALE}
 #DB_PASSWORD=${DB_PASSWORD:-DEFAULT_VALE}
 #DB_TYPE=${DB_TYPE:-DEFAULT_VALE}
 DB_NAME=${DB_NAME:-"jasperserver"}
-APP_DIR="/usr/local/tomcat/webapps"
 
 # wait upto 30 seconds for the database to start before connecting
 /wait-for-it.sh $DB_HOST:$DB_PORT -t 30
@@ -23,8 +23,8 @@ export BUILDOMATIC_MODE=script
 # echo "password: $DB_PASSWORD"
 # echo "db: $DB_NAME"
 
-# check if we need to bootstrap the JasperServer
-if [ -f "${APP_DIR}/.do_deploy_jasperserver" ]; then
+# check if we are running in fly build environment
+if [ -v RELEASE_COMMAND ]; then
     pushd /usr/src/jasperreports-server/buildomatic
 
     # Use provided configuration templates
@@ -40,18 +40,21 @@ if [ -f "${APP_DIR}/.do_deploy_jasperserver" ]; then
     
     # rename the application war so that it can be served as the default tomcat web application
     sed -i -e "s|^# webAppNameCE.*$|webAppNameCE = ROOT|g" default_master.properties
-    
+
     # run the minimum bootstrap script to initial the JasperServer
     ./js-ant create-js-db || true #create database and skip it if database already exists
     ./js-ant init-js-db-ce 
     ./js-ant import-minimal-ce 
     ./js-ant deploy-webapp-ce
-    
+
     # bootstrap was successful, delete file so we don't bootstrap on subsequent restarts
-    rm "${APP_DIR}/.do_deploy_jasperserver"
-    
+    rm /.do_deploy_jasperserver
+
     popd
-    
+
+else
+    # we are in prod environment
+
     # run Tomcat to start JasperServer webapp
     catalina.sh run
 

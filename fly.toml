@@ -9,13 +9,9 @@ primary_region = 'ams'
 [build]
   dockerfile = 'Dockerfile.fly'
 
-[deploy]
-  release_command = './entrypoint.sh'
-  release_command_timeout = '30m0s'
-
-  [deploy.release_command_vm]
-    size = 'performance-1x'
-    memory = '2gb'
+[[mounts]]
+  source = 'app_dir'
+  destination = '/usr/local/tomcat/webapps'
 
 [env]
   DB_HOST = 'jasperserver-db.fly.dev'
