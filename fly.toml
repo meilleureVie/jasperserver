@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for jasperserver on 2025-11-08T10:25:12-05:00
+# fly.toml app configuration file generated for jasperserver on 2025-11-08T11:25:05-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -8,10 +8,6 @@ primary_region = 'ams'
 
 [build]
   dockerfile = 'Dockerfile.fly'
-
-[[mounts]]
-  source = 'app_dir'
-  destination = '/usr/local/tomcat/webapps'
 
 [env]
   DB_HOST = 'jasperserver-db.fly.dev'
@@ -23,6 +19,10 @@ primary_region = 'ams'
 #
 # fly secrets set DB_PASSWORD="******"
 # fly ssh console -C "printenv"
+
+[[mounts]]
+  source = 'app_dir'
+  destination = '/usr/local/tomcat/webapps'
 
 [http_service]
   internal_port = 8080
