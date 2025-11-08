@@ -22,8 +22,8 @@ COPY .do_deploy_jasperserver /.do_deploy_jasperserver
 #Execute all in one layer so that it keeps the image as small as possible
 RUN chmod a+x /entrypoint.sh && \
     chmod a+x /wait-for-it.sh && \
-	chmod -R a+x /usr/src/jasperreports-server/buildomatic && \
-	chmod -R a+x /usr/src/jasperreports-server/apache-ant
+	chmod a+x /usr/src/jasperreports-server/buildomatic/js-ant && \
+	chmod a+x /usr/src/jasperreports-server/apache-ant/bin/ant
 
 # By default, JasperReports Server only comes with Postgres & MariaDB drivers
 # Copy over other JBDC drivers the deploy-jdbc-jar ant task will put it in right location
@@ -35,8 +35,8 @@ COPY web.xml /usr/local/tomcat/conf/
 
 # Use a strict minimum settings to start-up
 # as per http://community.jaspersoft.com/documentation/jasperreports-server-install-guide/v561/setting-jvm-options-application-servers
-ENV JAVA_OPTS="-Xms512m -Xmx512m -XX:+UseContainerSupport -XX:+UseG1GC"
-# ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:PermSize=32m -XX:MaxPermSize=128m -Xss2m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+ENV JAVA_OPTS="-Xms1024m -Xmx1536m -XX:+UseContainerSupport -XX:+UseG1GC"
+# ENV JAVA_OPTS="-Xms1024m -Xmx2048m -XX:PermSize=32m -XX:MaxPermSize=512m -Xss2m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
 
 # Wait for DB to start-up, start up JasperServer and bootstrap if required
 ENTRYPOINT ["/entrypoint.sh"]

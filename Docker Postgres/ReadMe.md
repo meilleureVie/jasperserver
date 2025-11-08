@@ -35,7 +35,7 @@ primary_region = "<your-region>"
 
 [mounts]
     source="pg_data"
-    destination="/var/lib/postgresql/data" # Standard PostgreSQL data directory
+    destination="/var/lib/postgresql" # Standard PostgreSQL data directory
 
 [http_service]
     internal_port = 5432 # Standard PostgreSQL port
