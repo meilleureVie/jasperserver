@@ -25,10 +25,7 @@ export BUILDOMATIC_MODE=script
 # echo "password: $DB_PASSWORD"
 # echo "db: $DB_NAME"
 
-# check if we need to bootstrap the JasperServer
-if [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
-    pushd /usr/src/jasperreports-server/buildomatic
-
+function initdb() {
     # Use provided configuration templates
     # Note: only works for Postgres or MySQL
     cp sample_conf/${DB_TYPE}_master.properties default_master.properties
@@ -46,7 +43,11 @@ if [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     # run the minimum bootstrap script to initial the JasperServer
     ./js-ant create-js-db || true #create database and skip it if database already exists
     ./js-ant init-js-db-ce 
-    ./js-ant import-minimal-ce 
+    ./js-ant import-minimal-ce
+}
+
+function deployJasper() {
+    # start deployment
     ./js-ant deploy-webapp-ce
     
     # change keystore path by moving it to the volume
@@ -54,12 +55,28 @@ if [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     mv /root/.jrsksp ${CATALINA_HOME}/webapps/
     sed -i -e "s|^ks=.*$|ks=${CATALINA_HOME}/webapps|g; s|^ksp=.*$|ksp=${CATALINA_HOME}/webapps|g" ${KEYSTORE_CONFIG_FILE}
     
-    # bootstrap was successful, delete file so we don't bootstrap on subsequent restarts
+    # add a target file that notify on reboot that jasperserver is already deployed
     cp -f "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
+}
+
+
+# setting temporary working dir
+pushd /usr/src/jasperreports-server/buildomatic
+
+# check if we need to bootstrap the JasperServer
+if [ ! -f "${LAST_COMMIT_FILE}" ]; then
     
-    popd
+    # first time we deploy jasperver
+    initdb
+    deployJasper
+
+elif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     
+    # jasperserver was deployed in the past. we need to update it
+    deployJasper
 fi
+
+popd
 
 # run Tomcat to start JasperServer webapp
 catalina.sh run
