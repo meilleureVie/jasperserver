@@ -8,6 +8,8 @@ set -e
 #DB_PASSWORD=${DB_PASSWORD:-DEFAULT_VALE}
 #DB_TYPE=${DB_TYPE:-DEFAULT_VALE}
 DB_NAME=${DB_NAME:-"jasperserver"}
+CURRENT_COMMIT_FILE="/.fly__jasperserver_version"
+LAST_COMMIT_FILE="${CATALINA_HOME}/webapps/.fly__jasperserver_version"
 
 # wait upto 30 seconds for the database to start before connecting
 /wait-for-it.sh $DB_HOST:$DB_PORT -t 30
@@ -23,7 +25,7 @@ export BUILDOMATIC_MODE=script
 # echo "db: $DB_NAME"
 
 # check if we need to bootstrap the JasperServer
-if [ ! -f "${CATALINA_HOME}/webapps/.jasperserver_deployed" ]; then
+if [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     pushd /usr/src/jasperreports-server/buildomatic
 
     # Use provided configuration templates
@@ -47,9 +49,12 @@ if [ ! -f "${CATALINA_HOME}/webapps/.jasperserver_deployed" ]; then
     ./js-ant deploy-webapp-ce
     
     # bootstrap was successful, delete file so we don't bootstrap on subsequent restarts
-    touch "${CATALINA_HOME}/webapps/.jasperserver_deployed"
+    cp -f "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
+    rm "${CATALINA_HOME}/webapps/.jasperserver_deployed"
     
     popd
+    
+else
     
     # run Tomcat to start JasperServer webapp
     catalina.sh run
