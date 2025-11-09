@@ -25,7 +25,7 @@ export BUILDOMATIC_MODE=script
 # echo "password: $DB_PASSWORD"
 # echo "db: $DB_NAME"
 
-function initdb() {
+function init() {
     # Use provided configuration templates
     # Note: only works for Postgres or MySQL
     cp sample_conf/${DB_TYPE}_master.properties default_master.properties
@@ -39,7 +39,9 @@ function initdb() {
     
     # rename the application war so that it can be served as the default tomcat web application
     sed -i -e "s|^# webAppNameCE.*$|webAppNameCE = ROOT|g" default_master.properties
-    
+}
+
+function initdb() {
     # run the minimum bootstrap script to initial the JasperServer
     ./js-ant create-js-db || true #create database and skip it if database already exists
     ./js-ant init-js-db-ce 
@@ -67,12 +69,14 @@ pushd /usr/src/jasperreports-server/buildomatic
 if [ ! -f "${LAST_COMMIT_FILE}" ]; then
     
     # first time we deploy jasperver
+    init
     initdb
     deployJasper
 
 elif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     
     # jasperserver was deployed in the past. we need to update it
+    init
     deployJasper
 fi
 
