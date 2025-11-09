@@ -67,15 +67,16 @@ pushd /usr/src/jasperreports-server/buildomatic
 
 # check if we need to bootstrap the JasperServer
 if [ ! -f "${LAST_COMMIT_FILE}" ]; then
-    
     # first time we deploy jasperver
     init
     initdb
     deployJasper
-
-elif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
-    
+lif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     # jasperserver was deployed in the past. we need to update it
+    init
+    deployJasper
+else 
+    # in case of simple restart, re-deploy again 
     init
     deployJasper
 fi
