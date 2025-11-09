@@ -41,7 +41,7 @@ function init() {
     sed -i -e "s|^# webAppNameCE.*$|webAppNameCE = ROOT|g" default_master.properties
 }
 
-function initdb() {
+function deployDb() {
     # run the minimum bootstrap script to initial the JasperServer
     ./js-ant create-js-db || true #create database and skip it if database already exists
     ./js-ant init-js-db-ce 
@@ -51,14 +51,16 @@ function initdb() {
 function deployJasper() {
     # start deployment
     ./js-ant deploy-webapp-ce
-    
+}
+
+function deployKeystore() {
     # change keystore path by moving it to the volume
-    mv -f /root/.jrsks ${CATALINA_HOME}/webapps/
-    mv -f /root/.jrsksp ${CATALINA_HOME}/webapps/
+    mv /root/.jrsks ${CATALINA_HOME}/webapps/
+    mv /root/.jrsksp ${CATALINA_HOME}/webapps/
     sed -i -e "s|^ks=.*$|ks=${CATALINA_HOME}/webapps|g; s|^ksp=.*$|ksp=${CATALINA_HOME}/webapps|g" ${KEYSTORE_CONFIG_FILE}
     
     # add a target file that notify on reboot that jasperserver is already deployed
-    cp -f "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
+    cp "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
 }
 
 
@@ -69,8 +71,9 @@ pushd /usr/src/jasperreports-server/buildomatic
 if [ ! -f "${LAST_COMMIT_FILE}" ]; then
     # first time we deploy jasperver
     init
-    initdb
+    deployDb
     deployJasper
+    deployKeystore
 elif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     # jasperserver was deployed in the past. we need to update it
     init
