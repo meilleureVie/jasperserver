@@ -25,7 +25,7 @@ export BUILDOMATIC_MODE=script
 # echo "password: $DB_PASSWORD"
 # echo "db: $DB_NAME"
 
-function init() {
+function initConfig() {
     # Use provided configuration templates
     # Note: only works for Postgres or MySQL
     cp sample_conf/${DB_TYPE}_master.properties default_master.properties
@@ -57,12 +57,15 @@ function deployKeystore() {
     # change keystore path by moving it to the volume
     mv /root/.jrsks ${CATALINA_HOME}/webapps/
     mv /root/.jrsksp ${CATALINA_HOME}/webapps/
-    sed -i -e "s|^ks=.*$|ks=${CATALINA_HOME}/webapps|g; s|^ksp=.*$|ksp=${CATALINA_HOME}/webapps|g" ${KEYSTORE_CONFIG_FILE}
-    
-    # add a target file that notify on reboot that jasperserver is already deployed
-    cp "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
 }
 
+function linkKeystore() {
+    sed -i -e "s|^ks=.*$|ks=${CATALINA_HOME}/webapps|g; s|^ksp=.*$|ksp=${CATALINA_HOME}/webapps|g" ${KEYSTORE_CONFIG_FILE}
+}
+
+function updateDeploymentVersion() {
+    cp "${CURRENT_COMMIT_FILE}" "${LAST_COMMIT_FILE}"
+}
 
 # setting temporary working dir
 pushd /usr/src/jasperreports-server/buildomatic
@@ -70,18 +73,23 @@ pushd /usr/src/jasperreports-server/buildomatic
 # check if we need to bootstrap the JasperServer
 if [ ! -f "${LAST_COMMIT_FILE}" ]; then
     # first time we deploy jasperver
-    init
+    initConfig
     deployDb
     deployJasper
     deployKeystore
+    linkKeystore
+    updateDeploymentVersion
 elif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     # jasperserver was deployed in the past. we need to update it
-    init
+    initConfig
     deployJasper
+    linkKeystore
+    updateDeploymentVersion
 else 
     # in case of simple restart, re-deploy again 
-    init
+    initConfig
     deployJasper
+    linkKeystore
 fi
 
 popd
