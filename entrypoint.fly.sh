@@ -55,8 +55,8 @@ function deployJasper() {
 
 function deployKeystore() {
     # change keystore path by moving it to the volume
-    mv /root/.jrsks ${CATALINA_HOME}/webapps/
-    mv /root/.jrsksp ${CATALINA_HOME}/webapps/
+    cp /root/.jrsks ${CATALINA_HOME}/webapps/
+    cp /root/.jrsksp ${CATALINA_HOME}/webapps/
 }
 
 function linkKeystore() {
