@@ -71,7 +71,7 @@ if [ ! -f "${LAST_COMMIT_FILE}" ]; then
     init
     initdb
     deployJasper
-lif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
+elif [ "$(cat $CURRENT_COMMIT_FILE)" != "$(cat $LAST_COMMIT_FILE)" ]; then
     # jasperserver was deployed in the past. we need to update it
     init
     deployJasper
