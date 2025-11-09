@@ -51,8 +51,8 @@ function deployJasper() {
     ./js-ant deploy-webapp-ce
     
     # change keystore path by moving it to the volume
-    mv /root/.jrsks ${CATALINA_HOME}/webapps/
-    mv /root/.jrsksp ${CATALINA_HOME}/webapps/
+    mv -f /root/.jrsks ${CATALINA_HOME}/webapps/
+    mv -f /root/.jrsksp ${CATALINA_HOME}/webapps/
     sed -i -e "s|^ks=.*$|ks=${CATALINA_HOME}/webapps|g; s|^ksp=.*$|ksp=${CATALINA_HOME}/webapps|g" ${KEYSTORE_CONFIG_FILE}
     
     # add a target file that notify on reboot that jasperserver is already deployed
