@@ -53,7 +53,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 
 # some cmd to deploy from github
-# fly launch --no-deploy  --name "jasperver"
+# fly launch --no-deploy  --name "jasperserver"
 # fly tokens create deploy -x 999999h
 # fly scale show
 # fly scale count 1
