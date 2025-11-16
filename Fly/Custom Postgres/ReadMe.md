@@ -37,12 +37,17 @@ primary_region = "<your-region>"
     source="pg_data"
     destination="/var/lib/postgresql" # Standard PostgreSQL data directory
 
-[http_service]
-    internal_port = 5432 # Standard PostgreSQL port
-    force_https = true
-    auto_stop_machines = 'suspend'
-    auto_start_machines = true
-    min_machines_running = 0
+[[services]]
+  protocol = 'tcp'
+  internal_port = 5432
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+  [[services.ports]]
+    port = 5432
+    handlers = ['pg_tls']
 ```
 
 # Deploy Your App:

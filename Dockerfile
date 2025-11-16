@@ -42,3 +42,5 @@ ENTRYPOINT ["/entrypoint.sh"]
 # tmp
 #docker build -t jasperserver . 
 #docker run -d --name jasperserver -e DB_TYPE=postgresql -e DB_HOST="host.docker.internal" -e DB_PORT=5432 -e DB_USER=postgres -e DB_PASSWORD=augustin -p 8082:8080 jasperserver
+#docker run --rm -it  --entrypoint bash jasperserver
+#docker exec -it vigilant_cori jasperserver

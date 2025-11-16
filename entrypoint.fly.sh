@@ -51,6 +51,8 @@ function deployDb() {
 function deployJasper() {
     # start deployment
     ./js-ant deploy-webapp-ce
+    # replace index.htm
+    cp index.htm ${CATALINA_HOME}/webapps/ROOT
 }
 
 function deployKeystore() {
