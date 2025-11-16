@@ -8,12 +8,12 @@ The Docker Image aims to quickly get up-and-running a JasperReports Server for a
 
 ### Using Command Line
 
-To start the JasperServer container you'll need to pass in 5 environment variables and link it to either a MySQL(DB_TYPE=mysql) or Postgres(DB_TYPE=postgresql) container.
+To start the JasperServer container you'll need to pass in 6 environment variables and link it to either a MySQL(DB_TYPE=mysql) or Postgres(DB_TYPE=postgresql) container.
 
 E.g. `docker run -d --name jasperserver -e DB_TYPE=postgresql -e DB_HOST=db -e DB_PORT=5432 -e DB_USER=postgres -e DB_PASSWORD=****** -e DB_NAME=jasperserver --link jasperserver_db:db -p 8080:8080 chezgugu/jasperserver`
 
-If you haven't got an existing MySQL or Postgres container then you can easily create one:
-`docker run -d --name jasperserver_db -e POSTGRES_PASSWORD=****** postgres:14-alpine`
+If you haven't got an existing MySQL or Postgres container then you can easily create one: \
+`docker run -d --name jasperserver_db -e POSTGRES_PASSWORD=****** postgres:14-alpine` \
 `docker run -d --name jasperserver_db -e MYSQL_ROOT_PASSWORD=****** mysql:8.4`
 
 ## Login to JasperReports Web
@@ -50,7 +50,7 @@ Steps to make a new official version of the image:
 2. Build the image locally for each tag e.g. `docker build -t chezgugu/jasperserver:8.2.0 -t chezgugu/jasperserver:latest .`
 3. Login to dockerhub with account that has push privileges to retriever org (i.e. `docker login`)
 4. Push image for each tag (e.g. `docker push retriever/jasperserver:8.2.0` and `docker push chezgugu/jasperserver:latest`)
-5. Check images are on Docker Hub: [retriever/jaserpserver](https://hub.docker.com/r/chezgugu/jasperserver/)
+5. Check images are on Docker Hub: [chezgugu/jasperserver](https://hub.docker.com/r/chezgugu/jasperserver/)
 6. Test new Docker Hub images by deleting local image e.g. `docker rmi chezgugu/jasperserver:8.2.0 chezgugu/jasperserver:latest` and re-downloading from Dockerhub and run up container e.g. `docker-compose up`. 
     * Note: ensure docker-compose.yml is pointing to right version and clear out local `datadir` to start fresh.
 
