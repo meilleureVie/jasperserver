@@ -48,8 +48,8 @@ Steps to make a new official version of the image:
     * major and minor line up with the included version of jasperserver
     * iteration is incremented each time a change is done that isn't an upgrade of the included jasperserver version
 2. Build the image locally for each tag e.g. `docker build -t chezgugu/jasperserver:8.2.0 -t chezgugu/jasperserver:latest .`
-3. Login to dockerhub with account that has push privileges to retriever org (i.e. `docker login`)
-4. Push image for each tag (e.g. `docker push retriever/jasperserver:8.2.0` and `docker push chezgugu/jasperserver:latest`)
+3. Login to dockerhub with account that has push privileges (i.e. `docker login`)
+4. Push image for each tag (e.g. `docker push chezgugu/jasperserver:8.2.0` and `docker push chezgugu/jasperserver:latest`)
 5. Check images are on Docker Hub: [chezgugu/jasperserver](https://hub.docker.com/r/chezgugu/jasperserver/)
 6. Test new Docker Hub images by deleting local image e.g. `docker rmi chezgugu/jasperserver:8.2.0 chezgugu/jasperserver:latest` and re-downloading from Dockerhub and run up container e.g. `docker-compose up`. 
     * Note: ensure docker-compose.yml is pointing to right version and clear out local `datadir` to start fresh.
